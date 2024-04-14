@@ -1,0 +1,56 @@
+Deployment Instructions
+Step 1: Prepare the EC2 Instance
+1.1 Launch an EC2 Instance
+Log into AWS Management Console.
+Navigate to EC2 and launch a new instance using an AMI with a pre-installed JDK and Apache Tomcat (e.g., an Amazon Linux AMI).
+Choose an instance type (e.g., t2.medium) and configure the instance details.
+Add storage as needed and configure security groups to allow inbound traffic on port 8080 and 8443 (for HTTP and HTTPS traffic).
+Review and launch the instance, then create and download a key pair (e.g., my-key.pem).
+1.2 Connect to Your Instance
+Change the permissions of the key file:
+bash
+Copy code
+chmod 400 /path/to/my-key.pem
+Connect to your instance via SSH:
+bash
+Copy code
+ssh -i /path/to/my-key.pem ec2-user@ec2-XX-XXX-XXX-XXX.compute-1.amazonaws.com
+Step 2: Configure Apache Tomcat
+2.1 Install Apache Tomcat (if not pre-installed)
+Download Tomcat:
+bash
+Copy code
+wget https://downloads.apache.org/tomcat/tomcat-9/v9.0.XX/bin/apache-tomcat-9.0.XX.tar.gz
+Extract the tar file:
+bash
+Copy code
+tar -xvzf apache-tomcat-9.0.XX.tar.gz
+Move the extracted directory to a suitable location:
+bash
+Copy code
+sudo mv apache-tomcat-9.0.XX /opt/tomcat9
+2.2 Update Permissions
+Make scripts executable:
+bash
+Copy code
+sudo chmod +x /opt/tomcat9/bin/*.sh
+Step 3: Deploy WAR File
+3.1 Upload the WAR File
+Use SCP to upload the WAR file from your local machine to the EC2 instance:
+bash
+Copy code
+scp -i /path/to/my-key.pem /path/to/your-application.war ec2-user@ec2-XX-XXX-XXX-XXX.compute-1.amazonaws.com:/opt/tomcat9/webapps
+3.2 Start Tomcat Server
+Navigate to the Tomcat bin directory:
+bash
+Copy code
+cd /opt/tomcat9/bin
+Start the Tomcat server:
+bash
+Copy code
+./startup.sh
+Step 4: Verify Deployment
+Open a web browser and navigate to http://ec2-XX-XXX-XXX-XXX.compute-1.amazonaws.com:8080/your-application. Replace "XX-XXX-XXX-XXX" with your actual EC2 instance's public IP address and "your-application" with the name of your WAR file without the .war extension.
+Troubleshooting
+Check Tomcat logs in /opt/tomcat9/logs for errors.
+Ensure security groups and network ACLs allow traffic on the required ports.
